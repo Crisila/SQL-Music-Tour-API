@@ -16,16 +16,16 @@ module.exports = (sequelize, DataTypes) => {
   Stage_Events.init({
     stage_event_id: {
       allowNull: false,
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
     stage_id: {
-      type: Sequelize.SMALLINT,
+      type: DataTypes.SMALLINT,
       allowNull: false
     },
     event_id: {
-      type: Sequelize.SMALLINT,
+      type: DataTypes.SMALLINT,
       allowNull: false
     }
   }, {

@@ -16,30 +16,30 @@ module.exports = (sequelize, DataTypes) => {
   Event.init({
     event_id: {
       allowNull: false,
-      type: Sequelize.INTEGER,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
     },
     name: {
-      type: Sequelize.STRING,
+      type: DataTypes.STRING,
       allowNull: false
     },
     date: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
       allowNull: false
     },
     start_time: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
       allowNull: false
     },
     end_time: {
-      type: Sequelize.DATE,
+      type: DataTypes.DATE,
       allowNull: false
     }},
     {
       sequelize,
       modelName: 'Event',
-      tableName: 'event',
+      tableName: 'events',
       timestamps: false
     });
   return Event;
