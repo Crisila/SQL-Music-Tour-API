@@ -15,6 +15,8 @@ app.use(express.urlencoded({ extended: false }))
 
 // my dependecies
 const bandModel = require('./models/band')
+const eventModel = require('./models/event')
+const stageModel = require('./models/stage')
 
 
 // SEQUELIZE CONNECTION

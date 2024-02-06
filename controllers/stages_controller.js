@@ -2,7 +2,7 @@
 const stages = require('express').Router();
 const { Op } = require('sequelize');
 const db = require('../models');
-const { Stage } = db;
+const { Stage, Event } = db;
 
 
 // INDEX
@@ -20,11 +20,27 @@ stages.get('/', async (req, res) => {
      }
 });
 
+// // SHOW
+// stages.get('/:id', async (req, res) => {
+//      try {
+//           const foundStage = await Stage.findOne({
+//                where: { stage_id: req.params.id }
+//           });
+//           res.status(200).json(foundStage);
+//      } catch (err) {
+//           res.status(500).json(err);
+//      }
+// });
 // SHOW
-stages.get('/:id', async (req, res) => {
+stages.get('/:name', async (req, res) => {
      try {
           const foundStage = await Stage.findOne({
-               where: { stage_id: req.params.id }
+               where: { stage_name: req.params.name },
+               include: [{
+                    model: Event,
+                    as: "events",
+                    through: { attributes: [] } // Exclude join table attributes
+               }]
           });
           res.status(200).json(foundStage);
      } catch (err) {

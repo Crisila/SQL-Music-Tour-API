@@ -2,35 +2,60 @@
 const bands = require('express').Router();
 const { Op } = require('sequelize');
 const db = require('../models');
-const { Band } = db;
+const { Band, Meet_Greet, Event, Set_Time } = db;
 
 
-// INDEX
+// INDEX: find all bands
 bands.get('/', async (req, res) => {
      try {
           const foundBands = await Band.findAll({
                order: [['available_start_time', 'ASC']],
                where: {
-                    name: { [Op.like]: `%${req.query.name ? req.query.name : ''}%`}
-               }
+                    name: { [Op.like]: `%${req.query.name ? req.query.name : ''}%` }
+               },
+               include: [Meet_Greet, Set_Time]
           });
           res.status(200).json(foundBands);
      } catch (err) {
+          console.error(err); // Log the error for debugging
           res.status(500).json(err);
      }
 });
 
-// SHOW
-bands.get('/:id', async (req, res) => {
+// SHOW: find specific band
+bands.get('/:name', async (req, res) => {
      try {
           const foundBand = await Band.findOne({
-               where: { band_id: req.params.id }
+               where: { name: req.params.name },
+               include: [{
+                    model: Meet_Greet,
+                    as: "meet_greets",
+                    attributes: { exclude: ["band_id", "event_id"] },
+                    include: {
+                         model: Event,
+                         as: "events",
+                         where: { name: { [Op.like]: `%${req.query.events ? req.query.events : ''}%` } }
+                    }
+               },
+               {
+                    model: Set_Time,
+                    as: "set_times",
+                    attributes: { exclude: ["band_id", "event_id"] },
+                    include: {
+                         model: Event,
+                         as: "events",
+                         where: { name: { [Op.like]: `%${req.query.events ? req.query.events : ''}%` } }
+                    }
+               }
+               ]
           });
           res.status(200).json(foundBand);
      } catch (err) {
+          console.error(err); // Log the error for debugging
           res.status(500).json(err);
      }
 });
+
 
 // CREATE A BAND
 bands.post('/', async (req, res) => {
@@ -41,6 +66,7 @@ bands.post('/', async (req, res) => {
                data: newBand
           });
      } catch (err) {
+          console.error(err); // Log the error for debugging
           res.status(500).json(err);
      }
 });
@@ -57,6 +83,7 @@ bands.put('/:id', async (req, res) => {
                message: `Successfully updated ${updatedBands} band(s)`
           });
      } catch (err) {
+          console.error(err); // Log the error for debugging
           res.status(500).json(err);
      }
 });
@@ -67,12 +94,14 @@ bands.delete('/:id', async (req, res) => {
           const deletedBands = await Band.destroy({
                where: {
                     band_id: req.params.id
+
                }
           });
           res.status(200).json({
                message: `Successfully deleted ${deletedBands} band(s)`
           });
      } catch (err) {
+          console.error(err); // Log the error for debugging
           res.status(500).json(err);
      }
 });
